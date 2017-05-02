@@ -33,6 +33,18 @@
         </div>
 
         <div class="form-group">
+            <label for="marca_id">Marca:</label>
+            <select class="form-control" id="marca_id" name="marca_id">
+            @foreach ($marcas as $marca)    
+                <option value="{{$marca->id}}" 
+@if ((isset($reg) && $reg->marca_id==$marca->id) 
+     or old('marca_id') == $marca->id) selected @endif>
+                        {{$marca->nome}}</option>
+            @endforeach    
+            </select>
+        </div>
+
+        <div class="form-group">
             <label for="cor">Cor:</label>
             <input type="text" class="form-control" id="cor" 
                    name="cor" 

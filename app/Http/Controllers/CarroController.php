@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Carro;
+use App\Marca;
 
 class CarroController extends Controller
 {
@@ -28,8 +29,11 @@ class CarroController extends Controller
     {
         // indica inclusão
         $acao = 1;
+
+        // obtém as marcas para exibir no form de cadastro
+        $marcas = Marca::orderBy('nome')->get();
         
-        return view('carros_form', compact('acao'));
+        return view('carros_form', compact('acao', 'marcas'));
     }
 
     /**
@@ -74,10 +78,13 @@ class CarroController extends Controller
         // obtém os dados do registro a ser editado 
         $reg = Carro::find($id);
         
+        // obtém as marcas para exibir no form de cadastro
+        $marcas = Marca::orderBy('nome')->get();
+
         // indica ao form que será alteração
         $acao = 2;
         
-        return view('carros_form', compact('reg', 'acao'));        
+        return view('carros_form', compact('reg', 'acao', 'marcas'));        
     }
 
     /**
@@ -109,6 +116,10 @@ class CarroController extends Controller
      */
     public function destroy($id)
     {
-        //
+        $carro = Carro::find($id);
+        if ($carro->delete()) {
+            return redirect()->route('carros.index')
+                    ->with('status', $carro->modelo.' Excluído!');                        
+        }
     }
 }
