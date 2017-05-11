@@ -6,17 +6,16 @@ use Illuminate\Http\Request;
 use App\Carro;
 use App\Marca;
 
-class CarroController extends Controller
-{
+class CarroController extends Controller {
+
     /**
      * Display a listing of the resource.
      *
      * @return \Illuminate\Http\Response
      */
-    public function index()
-    {
+    public function index() {
         $carros = Carro::all();
-        
+
         return view('carros_list', compact('carros'));
     }
 
@@ -25,14 +24,13 @@ class CarroController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function create()
-    {
+    public function create() {
         // indica inclusão
         $acao = 1;
 
         // obtém as marcas para exibir no form de cadastro
         $marcas = Marca::orderBy('nome')->get();
-        
+
         return view('carros_form', compact('acao', 'marcas'));
     }
 
@@ -42,17 +40,24 @@ class CarroController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function store(Request $request)
-    {
+    public function store(Request $request) {
+        
+        $this->validate($request, [
+            'modelo' => 'required|unique:carros|min:2|max:60',
+            'cor' => 'required|min:4|max:40',
+            'ano' => 'required|numeric|min:1970|max:2020',
+            'preco' => 'required'
+        ]);
+
         // recupera todos os campos do formulário
         $dados = $request->all();
-        
+
         // insere os dados na tabela
         $car = Carro::create($dados);
-        
+
         if ($car) {
             return redirect()->route('carros.index')
-                    ->with('status', $request->modelo.' Incluído!');            
+                            ->with('status', $request->modelo . ' Incluído!');
         }
     }
 
@@ -62,8 +67,7 @@ class CarroController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function show($id)
-    {
+    public function show($id) {
         //
     }
 
@@ -73,18 +77,17 @@ class CarroController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function edit($id)
-    {
+    public function edit($id) {
         // obtém os dados do registro a ser editado 
         $reg = Carro::find($id);
-        
+
         // obtém as marcas para exibir no form de cadastro
         $marcas = Marca::orderBy('nome')->get();
 
         // indica ao form que será alteração
         $acao = 2;
-        
-        return view('carros_form', compact('reg', 'acao', 'marcas'));        
+
+        return view('carros_form', compact('reg', 'acao', 'marcas'));
     }
 
     /**
@@ -94,17 +97,23 @@ class CarroController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, $id)
-    {
+    public function update(Request $request, $id) {
+        $this->validate($request, [
+            'modelo' => ['required', 'unique:carros,modelo,'.$id, 'min:2', 'max:60'],
+            'cor' => 'required|min:4|max:40',
+            'ano' => 'required|numeric|min:1970|max:2020',
+            'preco' => 'required'
+        ]);
+
         $reg = Carro::find($id);
-        
+
         $dados = $request->all();
-        
+
         $alt = $reg->update($dados);
-        
+
         if ($alt) {
             return redirect()->route('carros.index')
-                    ->with('status', $request->modelo.' Alterado!');                        
+                            ->with('status', $request->modelo . ' Alterado!');
         }
     }
 
@@ -114,12 +123,37 @@ class CarroController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function destroy($id)
-    {
+    public function destroy($id) {
         $carro = Carro::find($id);
         if ($carro->delete()) {
             return redirect()->route('carros.index')
-                    ->with('status', $carro->modelo.' Excluído!');                        
+                            ->with('status', $carro->modelo . ' Excluído!');
         }
+    }
+    
+    public function foto($id) {
+        // obtém os dados do registro a ser exibido
+        $reg = Carro::find($id);
+
+        // obtém as marcas para exibir no form de cadastro
+        $marcas = Marca::orderBy('nome')->get();
+
+        return view('carros_foto', compact('reg', 'marcas'));
+    }
+    
+    public function storefoto(Request $request) {
+        
+        // recupera todos os campos do formulário
+        $dados = $request->all();
+
+        $id = $dados['id'];
+        
+        if (isset($dados['foto'])) {
+            $fotoId = $id . '.jpg';
+            $request->foto->move(public_path('fotos'), $fotoId);
+        }
+        
+        return redirect()->route('carros.index')
+               ->with('status', $request->modelo . ' com Foto Cadastrada!');
     }
 }

@@ -5,39 +5,19 @@
 <script src="{{url('/js/jquery.mask.min.js')}}"></script>
 
 <div class='col-sm-11'>
-@if ($acao == 1)
-    <h2> Inclusão de Carros </h2>
-@else 
-    <h2> Alteração de Carros </h2>
-@endif
+    <h2> Cadastro de Fotos dos Carros </h2>
 </div>
 <div class='col-sm-1'>
     <a href='{{route('carros.index')}}' class='btn btn-primary' 
        role='button'> Voltar </a>
 </div>
 
-<div class="col-sm-12">
-@if (count($errors) > 0)
-    <div class="alert alert-danger">
-        <ul>
-            @foreach ($errors->all() as $error)
-                <li>{{ $error }}</li>
-            @endforeach
-        </ul>
-    </div>
-@endif    
-</div>
-
-
-
-<div class='col-sm-12'>
-@if ($acao == 1)
-    <form method="post" action="{{route('carros.store')}}">
-@else 
-    <form method="post" action="{{route('carros.update', $reg->id)}}">
-        {!! method_field('put') !!}
-@endif
-        {{ csrf_field() }}
+<form method="post" action="{{route('carros.storefoto')}}" 
+      enctype="multipart/form-data">
+   {{ csrf_field() }}
+   <input type="hidden" name="id" value="{{$reg->id}}">
+   
+   <div class='col-sm-9'>
         <div class="form-group">
             <label for="modelo">Modelo do Veículo:</label>
             <input type="text" class="form-control" id="modelo" 
@@ -105,10 +85,44 @@
         </div>
 
         <button type="submit" class="btn btn-primary">Enviar</button>
-    </form>    
+    </div>
+   <div class="col-sm-3" style="text-align: center">
+@php
+if (file_exists(public_path('fotos/'.$reg->id.'.jpg'))) {
+   $foto = '../fotos/'.$reg->id.'.jpg';
+} else {
+   $foto = '../fotos/sem_foto.jpg';
+}
+@endphp
+{!!"<img src=$foto id='imagem' height='150' width='200' alt='Foto'>"!!}
+<p>
+<div class="form-group">
+    <label for="foto"> Foto </label>
+    <input type="file" id="foto" name="foto" 
+           onchange="previewFile()"           
+           class="form-control">
 </div>
+</p>
+   </div>
+</form>    
 
 <script>
+function previewFile() {
+    var preview = document.getElementById('imagem');
+    var file    = document.getElementById('foto').files[0];
+    var reader  = new FileReader();
+    
+    reader.onloadend = function() {
+        preview.src = reader.result;
+    };
+    
+    if (file) {
+        reader.readAsDataURL(file);
+    } else {
+        preview.src = "";
+    }    
+}
+
 $(document).ready(function() {
    $('#preco').mask("##.###.##0,00", {reverse: true}); 
 });    

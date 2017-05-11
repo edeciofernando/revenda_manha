@@ -56,7 +56,9 @@
                            <button type="submit"
                                    class="btn btn-danger"> Excluir </button>
                      </form>              
-                           
+                     <a href='{{route('carros.foto', $carro->id)}}'
+                        class='btn btn-warning' 
+                        role='button'> Foto </a>                           
                     
                     
                 </td>
