@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use App\Carro;
 use App\Marca;
 
@@ -14,8 +15,12 @@ class CarroController extends Controller {
      * @return \Illuminate\Http\Response
      */
     public function index() {
-        $carros = Carro::all();
-
+        // se não estiver autenticado, redireciona para login
+        if (!Auth::check()) {
+            return redirect('/');
+        }
+//        $carros = Carro::all();        
+        $carros = Carro::paginate(3);
         return view('carros_list', compact('carros'));
     }
 
@@ -25,6 +30,10 @@ class CarroController extends Controller {
      * @return \Illuminate\Http\Response
      */
     public function create() {
+        // se não estiver autenticado, redireciona para login
+        if (!Auth::check()) {
+            return redirect('/');
+        }
         // indica inclusão
         $acao = 1;
 
@@ -41,7 +50,7 @@ class CarroController extends Controller {
      * @return \Illuminate\Http\Response
      */
     public function store(Request $request) {
-        
+
         $this->validate($request, [
             'modelo' => 'required|unique:carros|min:2|max:60',
             'cor' => 'required|min:4|max:40',
@@ -78,6 +87,10 @@ class CarroController extends Controller {
      * @return \Illuminate\Http\Response
      */
     public function edit($id) {
+        // se não estiver autenticado, redireciona para login
+        if (!Auth::check()) {
+            return redirect('/');
+        }
         // obtém os dados do registro a ser editado 
         $reg = Carro::find($id);
 
@@ -99,7 +112,7 @@ class CarroController extends Controller {
      */
     public function update(Request $request, $id) {
         $this->validate($request, [
-            'modelo' => ['required', 'unique:carros,modelo,'.$id, 'min:2', 'max:60'],
+            'modelo' => ['required', 'unique:carros,modelo,' . $id, 'min:2', 'max:60'],
             'cor' => 'required|min:4|max:40',
             'ano' => 'required|numeric|min:1970|max:2020',
             'preco' => 'required'
@@ -130,8 +143,12 @@ class CarroController extends Controller {
                             ->with('status', $carro->modelo . ' Excluído!');
         }
     }
-    
+
     public function foto($id) {
+        // se não estiver autenticado, redireciona para login
+        if (!Auth::check()) {
+            return redirect('/');
+        }
         // obtém os dados do registro a ser exibido
         $reg = Carro::find($id);
 
@@ -140,20 +157,21 @@ class CarroController extends Controller {
 
         return view('carros_foto', compact('reg', 'marcas'));
     }
-    
+
     public function storefoto(Request $request) {
-        
+
         // recupera todos os campos do formulário
         $dados = $request->all();
 
         $id = $dados['id'];
-        
+
         if (isset($dados['foto'])) {
             $fotoId = $id . '.jpg';
             $request->foto->move(public_path('fotos'), $fotoId);
         }
-        
+
         return redirect()->route('carros.index')
-               ->with('status', $request->modelo . ' com Foto Cadastrada!');
+                        ->with('status', $request->modelo . ' com Foto Cadastrada!');
     }
+
 }

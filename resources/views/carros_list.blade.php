@@ -59,13 +59,12 @@
                      <a href='{{route('carros.foto', $carro->id)}}'
                         class='btn btn-warning' 
                         role='button'> Foto </a>                           
-                    
-                    
                 </td>
             </tr>
             @endforeach
         </tbody>
     </table>    
+    {{ $carros->links() }}      
 </div>
 
 @endsection

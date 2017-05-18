@@ -11,12 +11,20 @@
 |
 */
 
-Route::get('/', function () {
-    return view('index');
-});
+//Route::get('/', function () {
+//    return view('index');
+//});
 
 Route::resource('carros', 'CarroController');
 Route::get('carrosfoto/{id}', 'CarroController@foto')
         ->name('carros.foto');
 Route::post('carrosfotostore', 'CarroController@storefoto')
         ->name('carros.storefoto');
+
+Auth::routes();
+
+Route::get('/', 'HomeController@index');
+
+Route::get('register', function() {
+    return "<h1> Permissão Negada </h1>";
+});
