@@ -174,4 +174,48 @@ class CarroController extends Controller {
                         ->with('status', $request->modelo . ' com Foto Cadastrada!');
     }
 
+    public function pesq() {
+        // se não estiver autenticado, redireciona para login
+        if (!Auth::check()) {
+            return redirect('/');
+        }
+        $carros = Carro::paginate(3);
+        return view('carros_pesq', compact('carros'));
+    }
+
+    public function filtro(Request $request) {
+        // obtém dados do form de pesquisa
+        $modelo = $request->modelo;
+        $precomax = $request->precomax;
+        
+        $cond=array();
+        
+        if (!empty($modelo)) {
+            array_push($cond, array('modelo', 'like', '%'.$modelo.'%'));
+        }
+        
+        if (!empty($precomax)) {
+            array_push($cond, array('preco', '<=', $precomax));
+        }
+
+        $carros = Carro::where($cond)
+                ->orderBy('modelo')->paginate(3);
+        return view('carros_pesq', compact('carros'));
+    }
+    
+    public function filtro2(Request $request) {
+        // obtém dados do form de pesquisa
+        $modelo = $request->modelo;
+        $precomax = $request->precomax;
+
+        if (empty($precomax)) {
+            $carros = Carro::where('modelo', 'like', '%' . $modelo . '%')
+                            ->orderBy('modelo')->paginate(3);
+        } else {
+            $carros = Carro::where('modelo', 'like', '%' . $modelo . '%')
+                            ->where('preco', '<=', $precomax)
+                            ->orderBy('modelo')->paginate(3);
+        }
+        return view('carros_pesq', compact('carros'));
+    }    
 }

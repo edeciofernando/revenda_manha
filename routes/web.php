@@ -20,6 +20,10 @@ Route::get('carrosfoto/{id}', 'CarroController@foto')
         ->name('carros.foto');
 Route::post('carrosfotostore', 'CarroController@storefoto')
         ->name('carros.storefoto');
+Route::get('carrospesq', 'CarroController@pesq')
+        ->name('carros.pesq');
+Route::post('carrosfiltro', 'CarroController@filtro')
+        ->name('carros.filtro');
 
 Auth::routes();
 
