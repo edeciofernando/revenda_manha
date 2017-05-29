@@ -4,8 +4,11 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
+use Mail;
 use App\Carro;
 use App\Marca;
+use App\Mail\AvisoPromocao;
 
 class CarroController extends Controller {
 
@@ -187,22 +190,22 @@ class CarroController extends Controller {
         // obtém dados do form de pesquisa
         $modelo = $request->modelo;
         $precomax = $request->precomax;
-        
-        $cond=array();
-        
+
+        $cond = array();
+
         if (!empty($modelo)) {
-            array_push($cond, array('modelo', 'like', '%'.$modelo.'%'));
+            array_push($cond, array('modelo', 'like', '%' . $modelo . '%'));
         }
-        
+
         if (!empty($precomax)) {
             array_push($cond, array('preco', '<=', $precomax));
         }
 
         $carros = Carro::where($cond)
-                ->orderBy('modelo')->paginate(3);
+                        ->orderBy('modelo')->paginate(3);
         return view('carros_pesq', compact('carros'));
     }
-    
+
     public function filtro2(Request $request) {
         // obtém dados do form de pesquisa
         $modelo = $request->modelo;
@@ -217,5 +220,21 @@ class CarroController extends Controller {
                             ->orderBy('modelo')->paginate(3);
         }
         return view('carros_pesq', compact('carros'));
-    }    
+    }
+
+    public function graf() {
+        $carros = DB::table('carros')
+                ->join('marcas', 'carros.marca_id', '=', 'marcas.id')
+                ->select('marcas.nome as marca', DB::raw('count(*) as num'))
+                ->groupBy('marcas.nome')
+                ->get();
+
+        return view('carros_graf', compact('carros'));
+    }
+
+    public function enviacontato() {
+        $destino = "edeciofernando@gmail.com";
+        Mail::to($destino)->send(new AvisoPromocao());
+    }
+    
 }

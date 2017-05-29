@@ -24,6 +24,20 @@
                             <li><a href="#">Page 1-3</a></li>
                         </ul>
                     </li>
+                    <li class="dropdown"><a class="dropdown-toggle" data-toggle="dropdown" href="#">Pesquisas <span class="caret"></span></a>
+                        <ul class="dropdown-menu">
+                            <li><a href="{{route('carros.pesq')}}">Veículos</a></li>
+                            <li><a href="#">Marcas</a></li>
+                            <li><a href="#">Page 1-3</a></li>
+                        </ul>
+                    </li>
+                    <li class="dropdown"><a class="dropdown-toggle" data-toggle="dropdown" href="#">Gráficos <span class="caret"></span></a>
+                        <ul class="dropdown-menu">
+                            <li><a href="{{route('carros.graf')}}">Veículos</a></li>
+                            <li><a href="#">Marcas</a></li>
+                            <li><a href="#">Page 1-3</a></li>
+                        </ul>
+                    </li>
                     <li><a href="#">Pesquisas</a></li>
                     <li><a href="#">Relatórios</a></li>
                     <li><a href="#">Utilitários</a></li>

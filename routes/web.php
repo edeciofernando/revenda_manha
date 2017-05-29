@@ -25,6 +25,10 @@ Route::get('carrospesq', 'CarroController@pesq')
 Route::post('carrosfiltro', 'CarroController@filtro')
         ->name('carros.filtro');
 
+Route::get('carrosgraf', 'CarroController@graf')
+        ->name('carros.graf');
+
+
 Auth::routes();
 
 Route::get('/', 'HomeController@index');
