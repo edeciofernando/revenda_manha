@@ -36,3 +36,10 @@ Route::get('/', 'HomeController@index');
 Route::get('register', function() {
     return "<h1> Permissão Negada </h1>";
 });
+
+Route::resource('clientes', 'ClienteController');
+
+// Rotas dos Web Services
+Route::get('carrosws/{id?}', 'CarroController@ws');
+Route::get('carrosxml/{id?}', 'CarroController@xml');
+
